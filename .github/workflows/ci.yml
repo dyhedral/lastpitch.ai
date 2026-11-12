@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  html:
+    name: html (validate, h1)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+      - name: Validate HTML
+        run: npx --yes html-validate@10 "**/*.html"
+      - name: One h1 per page
+        run: python3 -I .github/scripts/check_html.py
+
+  links:
+    name: link check
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - name: Check href/src with lychee
+        uses: lycheeverse/lychee-action@v2
+        with:
+          # mailto: links are not checked (lychee default). Failures are errors.
+          # The bare font origins are preconnect hints, not pages.
+          args: >-
+            --no-progress --include-fragments --max-retries 3 --retry-wait-time 5
+            --exclude '^https://fonts\.(googleapis|gstatic)\.com/?$'
+            --root-dir ${{ github.workspace }}
+            './**/*.html'
+          fail: true
+          jobSummary: true
