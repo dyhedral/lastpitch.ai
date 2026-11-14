@@ -190,7 +190,8 @@ blockquote, .t-quote {
 
 /* nav: wordmark left, links right, heavy rule under */
 .t-nav { display: flex; justify-content: space-between; align-items: center; gap: var(--s-5); padding: var(--s-5) 0; border-bottom: var(--heavy) solid var(--rule-strong); }
-.t-nav a { text-decoration: none; min-height: 44px; display: inline-flex; align-items: center; }
+.t-nav a { text-decoration: none; position: relative; }
+.t-nav a::after { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 44px; transform: translateY(-50%); }
 .t-nav a.t-label:hover { color: var(--text); }
 .t-wordmark { display: inline-flex; align-items: center; gap: var(--s-3); color: var(--text); font-family: var(--font-display); font-weight: 700; font-size: 22px; letter-spacing: var(--track-display); text-decoration: none; }
 .t-wordmark svg { width: 24px; height: 24px; flex: none; }
